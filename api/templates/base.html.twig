@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheet %}
+            <link rel="stylesheet" href="{{ asset('bundles/apiplatform/swagger-ui/swagger-ui.css') }}">
+            <link rel="stylesheet" href="{{ asset('bundles/apiplatform/style.css') }}">
+            <style>
+                h1 {
+                    margin: 0 0 20px 0;
+                    padding: 10px 0 20px 30px;
+                    background-color: white;
+                    border-bottom: 1px solid #ccc;
+                    color: #3caab5;
+                }
+
+                header:before {
+                    background-color: white;
+                }
+
+                div.breadcrumb {
+                    padding: 12px 2px 2px 30px;
+                    background-color: white;
+                }
+                div.breadcrumb::before {
+                    content: " » ";
+                }
+
+                body {
+                    font-family: sans-serif
+                }
+
+                body > form {
+                    margin: 30px
+                }
+
+                .alert {
+                    margin: 0 0 20px 0;
+                    padding: 10px;
+                    font-weight: bold;
+                }
+
+                .alert-danger {
+                    border: 1px solid red;
+                    color: red;
+                }
+
+                th {
+                    text-align: left;
+                }
+
+                h1 {
+                    font-weight: 300;
+                }
+            </style>
+        {% endblock %}
+    </head>
+    <body>
+        <header>
+            <a id="logo" href="https://eos-uptrade.de"><img src="{{ asset('img/eos.uptrade-logo.png') }}" alt="eos.uptrade-Logo"></a>
+        </header>
+
+        {% block body %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>
