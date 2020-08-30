@@ -1,0 +1,10 @@
+# Hier bietet API Platform die automatisch generierte Dokumentation an:
+api_entrypoint:
+    path: "/api_entrypoint/{index}.{_format}"
+    controller: api_platform.action.entrypoint
+    defaults:
+        _format: ''
+        _api_respond: true
+        index: index
+    requirements:
+        index: index
