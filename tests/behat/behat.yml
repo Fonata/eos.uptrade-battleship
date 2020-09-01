@@ -1,0 +1,15 @@
+default:
+    suites:
+        default:
+            contexts:
+                - FeatureContext
+                - App\MinkFeatureContext
+                - App\ApiExtensionFeatureContext
+    extensions:
+        Imbo\BehatApiExtension:
+            apiClient:
+                base_uri: http://127.0.0.1:8003
+        Behat\MinkExtension\ServiceContainer\MinkExtension:
+            goutte: ~
+            base_url: http://127.0.0.1:8003/
+    
