@@ -1,0 +1,38 @@
+name: CI/CD
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  behat-tests:
+    name: Behat tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Validate composer.json and install
+        run: |
+          cd api
+          php7.4 /usr/bin/composer validate
+          php7.4 /usr/bin/composer install --no-progress
+          cd ../tests/behat
+          php7.4 /usr/bin/composer validate
+          php7.4 /usr/bin/composer install --no-progress
+          cd ../..
+#      - name: Install Symfony CLI
+#        run: |
+#          wget https://get.symfony.com/cli/installer -O - | bash
+      - name: Initialize the database
+        run: |
+          printf "[client]\nuser=root\npassword=root\n" >  ~/.my.cnf
+          cd api
+          ../init-db.sh
+      - name: Start the web server in the background
+        run: |
+          php7.4 -S 0.0.0.0:8003 -t api/public &
+      - name: Run Behat tests
+        run: |
+          cd tests/behat
+          php7.4 vendor/bin/behat
