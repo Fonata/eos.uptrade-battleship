@@ -63,16 +63,8 @@ class ApiAuthenticator extends AbstractGuardAuthenticator implements PasswordAut
 
         if (!$user) {
             if ($credentials['email'] === 'admin@eos-uptrade.de') {
-                // Create first user - this makes testing with an empty DB easy.
-                $user = new User();
-                $user->setName('Adam');
-                $user->setSurname('Admin');
-                $user->setEmail('admin@eos-uptrade.de');
-                $user->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
-                $user->setPlainPassword('demo');
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
-                return $user;
+                // This makes testing with an empty DB easy.
+                return $this->user = $this->createFirstUser($credentials['email']);
             }
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
@@ -123,5 +115,18 @@ class ApiAuthenticator extends AbstractGuardAuthenticator implements PasswordAut
     public function supportsRememberMe()
     {
         return false;
+    }
+
+    private function createFirstUser($email): User
+    {
+        $user = new User();
+        $user->setName('Adam');
+        $user->setSurname('Admin');
+        $user->setEmail($email);
+        $user->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
+        $user->setPlainPassword('demo');
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
     }
 }
