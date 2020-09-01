@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <style>
+        .game-wrapper {
+            margin: 1em 30px;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        li {
+            cursor: pointer;
+        }
+
+        #ocean {
+            transform: translate(154px, 210px) skew(-35deg, 30deg);
+            display: inline-block;
+            color: blue;
+            background-color: white;
+            box-shadow: 4px 5px 15px 5px #000000;
+        }
+
+        #target_ocean {
+            transform: translate(349px, -67px) skew(2deg, 30deg);
+            display: inline-block;
+            background-color: white;
+            box-shadow: 4px 5px 15px 5px #000000;
+        }
+
+        .ship {
+            border-width: 1px;
+            border-color: red;
+        }
+
+        .ship.horizonal {
+            border-top-style: solid;
+            border-bottom-style: solid;
+        }
+
+        .ship.vertical {
+            border-left-style: solid;
+            border-right-style: solid;
+        }
+
+    </style>
+    <script src="{{ asset('js/jquery-1.11.1.min.js') }}"></script>
+
+    <div class="breadcrumb"><a href="{{ path('front_page') }}">Home</a></div>
+    <h1>Schiffe versenken</h1>
+    <div class="game-wrapper">
+        Wählen Sie ein Spiel:
+        <ul id="games">
+            <li>Will be replaced by actual games</li>
+        </ul>
+        <div id="gameField">
+            <pre id="target_ocean"></pre>
+            <pre id="ocean"></pre>
+        </div>
+        <script>
+            const $gameField = $('#gameField').hide();
+            const $ocean = $('#ocean');
+            const $targetOcean = $('#target_ocean');
+            const $ul = $('ul#games').empty();
+            $.get('/login', function (data) {
+                console.log(data.current_user);
+                $.get(data.current_user, function (user) {
+                    for (const gameKey in user.games) {
+                        // noinspection JSUnfilteredForInLoop
+                        $.get(user.games[gameKey], addLiFromGame);
+                    }
+                    $ul.append($('<li>Neues Spiel</li>').click(startNewGame));
+                });
+            });
+
+            function addLiFromGame(game) {
+                let li = $('<li data-game="' + game['@id'] + '">' + game.created + '</li>').click(continueExistingGame);
+                $ul.prepend(li);
+                return li;
+            }
+
+            function startNewGame() {
+                $.ajax({
+                    url: '/api/games',
+                    headers: {'Content-Type': 'application/json'},
+                    method: 'POST',
+                    data: '{}',
+                    success: (game) => {
+                        addLiFromGame(game).click();
+                    }
+                });
+            }
+
+            /**
+             *
+             * @param {jQuery} $ocean
+             * @param {string} oceanData
+             *   110 characters describing the ocean.
+             * @param {function} mapper
+             *   A function converting the characters in the ocean to DOM elements.
+             */
+            function fillOcean($ocean, oceanData, mapper) {
+                $ocean.empty();
+                for (let i = 0; i < 110; i++) {
+                    let c = oceanData[i];
+                    if (c === '\n') {
+                        $ocean.append('<br>');
+                        continue;
+                    }
+
+                    let col = i % 11 + 1;
+                    /** @type {string} coordinate, for example "D4" */
+                    let coordinate = String.fromCharCode(65 + Math.floor(i / 11)) + col;
+
+                    let $span = $(mapper(c, coordinate));
+                    $ocean.append($span.attr('id', coordinate))
+                }
+            }
+
+            function continueExistingGame() {
+                $.get($(this).data('game'), (game) => {
+                    $gameField.show();
+                    fillOcean($ocean, game.ocean, (char, coordinate) => {
+                        let classes = '';
+                        for (let ship in game.ships) {
+                            let positions = game.ships[ship];
+                            let direction = '';
+                            for (let posKey = 0; posKey < positions.length; posKey++) {
+                                if (positions[posKey] === coordinate) {
+                                    classes += " ship " + ship;
+                                    let currLetter = positions[0].substr(0, 1);
+                                    let nextLetter = positions[1].substr(0, 1);
+                                    classes += currLetter === nextLetter ? " horizontal" : " vertical"
+                                    if (posKey === 0) {
+                                        classes += ' first';
+                                    }
+                                    if (posKey === positions.length) {
+                                        classes += ' last';
+                                    }
+                                }
+                            }
+                        }
+                        if (char === "S" || char === "H") {
+                            // Sunk or hit
+                            return '<span class="' + classes + ' hit">●</span>';
+                        }
+                        return '<span class="' + classes + '">◌</span>';
+                    });
+                    fillOcean($targetOcean, game.target_ocean, (char, coordinate) => {
+                        if (char === "S" || char === "H") {
+                            return '<span class="hit">●</span>';
+                        }
+                        if (char === "M") {
+                            return '<span class="miss">●</span>';
+                        }
+                        return '<span>◌</span>';
+                    });
+
+                });
+            }
+        </script>
+    </div>
+{% endblock %}
