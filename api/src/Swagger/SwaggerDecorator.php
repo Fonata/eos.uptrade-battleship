@@ -21,11 +21,11 @@ final class SwaggerDecorator implements NormalizerInterface
     {
         /** @var \ArrayObject $docs */
         $docs = $this->decorated->normalize($object, $format, $context);
+        $paths =& $docs['paths'];
+        $paths['/api/users/{id}']['delete']['summary'] = "Deletes the user along with all of his or her games.";
 
-        $docs['paths']['/api/user/{id}']['delete']['summary'] = "Delete the user along with all of his or her games.";
-
-        $docs['paths']['/login']['post']['description'] = 'API endpoint to sign users in.';
-        $docs['paths']['/login']['post']['requestBody'] = [
+        $paths['/login']['post']['summary'] = 'API endpoint to sign users in.';
+        $paths['/login']['post']['requestBody'] = [
             'required' => true,
             'content' => [
                 'application/json' => ['schema' => [
@@ -41,7 +41,45 @@ final class SwaggerDecorator implements NormalizerInterface
                     'required' => ['email', 'password']]]
             ]
         ];
-        $docs['paths']['/login']['post']['responses'] = [
+
+
+        $paths['/api/game/{id}/shoot']['post']['summary'] =
+            'API endpoint for the player to shoot.
+             This will also cause the computer player to shoot.
+             The returned game will contain updated oceans.';
+        $paths['/api/game/{id}/shoot']['post']['requestBody'] = [
+            'required' => true,
+            'content' => [
+                'application/json' => ['schema' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'target' => [
+                            'type' => 'string',
+                            'example' => 'D4',
+                            'description' => 'The coordinates of the target.'
+                        ],
+                    ],
+                    'required' => ['target']]]
+            ]
+        ];
+        $paths['/api/game/{id}/shoot']['post']['responses']['200'] = [
+            'description' => 'Result of the shot.',
+            'content' => [
+                'application/json' => [
+                    'schema' =>
+                        [
+                            'type' => 'object',
+                            'properties' => [
+                                'result' => [
+                                    'type' => 'string',
+                                    'enum' => ['Miss.', 'Hit. Carrier.', 'Hit. Battleship.', 'Hit. Cruiser.', 'Hit. Submarine.', 'Hit. Destroyer.']
+                                ]
+                            ]
+                        ]
+                ]]
+        ];
+        unset($paths['/api/game/{id}/shoot']['post']['responses']['201']);
+        $paths['/login']['post']['responses'] = [
             '200' => ['description' => 'Success'],
             '403' => ['description' => 'Failure'],
         ];
