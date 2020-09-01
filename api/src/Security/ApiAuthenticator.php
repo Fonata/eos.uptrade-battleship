@@ -31,6 +31,8 @@ class ApiAuthenticator extends AbstractGuardAuthenticator implements PasswordAut
     private $urlGenerator;
     private $passwordEncoder;
 
+    private ?User $user;
+
     public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->entityManager = $entityManager;
@@ -59,9 +61,11 @@ class ApiAuthenticator extends AbstractGuardAuthenticator implements PasswordAut
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $criteria = ['email' => $credentials['email'], 'simulated_player' => false];
+        $this->user = $userRepository->findOneBy($criteria);
 
-        if (!$user) {
+        if (!$this->user) {
             if ($credentials['email'] === 'admin@eos-uptrade.de') {
                 // This makes testing with an empty DB easy.
                 return $this->user = $this->createFirstUser($credentials['email']);
@@ -70,7 +74,7 @@ class ApiAuthenticator extends AbstractGuardAuthenticator implements PasswordAut
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
         }
 
-        return $user;
+        return $this->user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
