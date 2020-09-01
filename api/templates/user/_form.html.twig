@@ -1,0 +1,19 @@
+{{ form_start(form) }}
+<style>
+    label {
+        display: block;
+        margin-top: 20px;
+    }
+    ul {
+        /** Validation errors */
+        margin: 0 0 20px 0;
+        padding: 10px;
+        font-weight: bold;
+        border: 1px solid red;
+        color: red;
+        list-style-type: none;
+    }
+</style>
+{{ form_widget(form) }}
+<button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}

@@ -47,12 +47,14 @@ class ApiAuthenticator extends AbstractGuardAuthenticator implements PasswordAut
 
     public function getCredentials(Request $request)
     {
-        $credentials = [
+        $form_credentials = [
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
         ];
-        return json_decode($request->getContent(), true, 2, JSON_THROW_ON_ERROR) +
-            $credentials;
+        $json_credentials = strpos($request->headers->get('Content-Type'), 'json') > 0 ?
+            json_decode($request->getContent(), true, 2, JSON_THROW_ON_ERROR) :
+            [];
+        return $json_credentials + $form_credentials;
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)

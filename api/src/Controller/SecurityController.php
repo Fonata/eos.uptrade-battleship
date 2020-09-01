@@ -41,7 +41,7 @@ class SecurityController extends AbstractController
         /** @var User $user */
         $user = $security->getUser();
         if ($user) {
-            return new JsonResponse(['status' => 'ok', 'current_user' => '/api/user/' . $user->getId()]);
+            return new JsonResponse(['status' => 'ok', 'current_user' => '/api/users/' . $user->getId()]);
         }
         return new JsonResponse([
             'status' => 'login needed',

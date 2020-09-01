@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User index{% endblock %}
+
+{% block body %}
+    <style>
+        div.wrap, table {
+            margin-left: 30px;
+            border-spacing: unset;
+        }
+
+        tr:hover {
+            background-color: white;
+        }
+
+        td {
+            padding: 5px 11px 0 0;
+        }
+    </style>
+    <div class="breadcrumb"><a href="{{ path('front_page') }}">Home</a></div>
+    <h1>API user administration</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.surname }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles ? user.roles|join(', ') : '' }}</td>
+                <td>
+                    <a data-email="{{ user.email | escape('html_attr') }}" href="{{ path('user_edit', {'id': user.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="wrap">
+        <hr>
+        All users shown here have access to the <a href="{{ path('api_entrypoint') }}">API</a>. Only admins can see this
+        list. Also, only admins can modify projects of other users.
+        <a href="{{ path('user_new') }}">Create new user</a>
+
+    </div>
+{% endblock %}
