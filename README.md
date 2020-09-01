@@ -88,14 +88,14 @@ diese `README.md`-Datei liegt.
 
 ````bash
 docker run -it --rm --publish 8003:8003 --name eos.uptrade \
- -v "$PWD":/var/www/eos.uptrade-coding-challenge \
- -w /var/www/eos.uptrade-coding-challenge \
+ -v "$PWD":/var/www/battleship.blaeul.de \
+ -w /var/www/battleship.blaeul.de \
  chialab/php:7.4 bash -c '
   export COMPOSER_ALLOW_SUPERUSER=1
   alias "ll=ls -lsa"
   apt update
   apt install -y mariadb-server git unzip nano sudo
-  cd /var/www/eos.uptrade-coding-challenge
+  cd /var/www/battleship.blaeul.de
   cd api
   composer validate
   composer install
