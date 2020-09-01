@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
  *          },
  *          "shoot"={
  *              "method"="POST",
- *              "path"="/game/{id}/shoot",
+ *              "path"="/games/{id}/shoot",
  *              "controller"=ShootingController::class,
  *          },
  *          "patch"={
@@ -163,7 +163,7 @@ class Game implements TimestampableEntityInterface
     private $peg_counts;
 
     /**
-     * @ORM\Column(type="string", length=5, nullable=true)
+     * @ORM\Column(type="string", length=6, nullable=true)
      */
     private $winner;
 

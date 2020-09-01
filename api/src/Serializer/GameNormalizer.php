@@ -62,7 +62,7 @@ class GameNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
         $enemyGame = $object->getEnemyGame();
         if ($enemyGame) {
             $array['target_ocean'] = $enemyGame->getOcean();
-            $array['sunken_ships'] = $enemyGame->getSunkenShips();
+            $array['target_ocean_sunken_ships'] = $enemyGame->getSunkenShips();
         }
 
         return $array;
