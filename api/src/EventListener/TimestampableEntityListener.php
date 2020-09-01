@@ -38,6 +38,7 @@ class TimestampableEntityListener implements EventSubscriber
         $object = $event->getObject();
         if ($object instanceof TimestampableEntityInterface) {
             $object->setCreated(new \DateTime());
+            $object->setChanged(new \DateTime());
         }
     }
 }
