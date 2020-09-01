@@ -94,7 +94,7 @@ class ApiAuthenticator extends AbstractGuardAuthenticator implements PasswordAut
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return new JsonResponse(['status' => 'ok']);
+        return new JsonResponse(['status' => 'ok', 'current_user' => '/api/users/' . $this->user->getId()]);
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
