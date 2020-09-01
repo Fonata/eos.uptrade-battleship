@@ -17,7 +17,6 @@
 /.php_cs.cache
 ###< friendsofphp/php-cs-fixer ###
 
-/.env
 /docker-compose.override.yaml
 /docker-compose.override.yml
 
