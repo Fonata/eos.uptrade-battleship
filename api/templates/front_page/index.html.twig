@@ -307,20 +307,23 @@
     </style>
 
     <section class="welcome welcome__main">
-        <img class="main__aside" src="{{ asset('img/me_holding_card.png') }}" alt="Christian holding a card saying welcome :-)">
+        <img class="main__aside" src="{{ asset('img/me_holding_card.png') }}"
+             alt="Christian holding a card saying welcome :-)">
         <div class="main__content"><h1><strong
                     style="font-family: pfdin,trebuchet ms,Tahoma,Arial,Helvetica,sans-serif">{{ title }}</strong></h1>
-            <div class="main__other">Please choose:
+            <div class="main__other">Bitte wählen:
                 <ul>
                     <li>
                         {% if app.user %}
-                            You are logged in as <b>{{ app.user.username }}</b>. You can <a href="{{ path('app_logout') }}">log
-                                out</a> if you wish.
+                            Sie sind als <b>{{ app.user.username }}</b> eingeloggt. Sie könnten sich <a
+                            href="{{ path('app_logout') }}">ausloggen</a>, wenn Sie mögen.
                         {% else %}
-                            <a href="{{ path('app_login') }}">Browser login </a>
+                            <a href="{{ path('login_form') }}">Browser-Login </a>
                         {% endif %}
                     </li>
-                    <li><a href="{{ path('api_entrypoint') }}">API documentation</a></li>
+                    <li><a href="{{ path('user_index') }}">Benutzerverwaltung</a></li>
+                    <li><a href="{{ path('game_client') }}">Spielen</a></li>
+                    <li><a href="{{ path('api_entrypoint') }}">API-Dokumentation</a></li>
                 </ul>
             </div>
         </div>
