@@ -79,6 +79,12 @@ class GameEventListener implements EventSubscriber
             return;
         }
 
+        if ($Game->getOwner()->getSimulatedPlayer()) {
+            // Es ist ein normaler Spieler eingeloggt, der das Spiel eines Computergegners speichern will -
+            // das ist okay.
+            return;
+        }
+
         if ($Game->getOwner()->getEmail() !== $loggedInUser->getEmail()) {
             throw new AccessDeniedException("You cannot edit other users' Games.");
         }
