@@ -14,33 +14,89 @@
         }
 
         #ocean {
-            transform: translate(154px, 210px) skew(-35deg, 30deg);
-            display: inline-block;
+            transform: translate(6px, 298px) skew(-35deg, 30deg);
             color: blue;
-            background-color: white;
             box-shadow: 4px 5px 15px 5px #000000;
         }
 
         #target_ocean {
             transform: translate(349px, -67px) skew(2deg, 30deg);
-            display: inline-block;
-            background-color: white;
-            box-shadow: 4px 5px 15px 5px #000000;
         }
 
-        .ship {
+        #target_ocean td.not-shot-yet:hover {
+            background: #ffffaa;
+            cursor: pointer;
+        }
+
+        .ocean td {
             border-width: 1px;
-            border-color: red;
+            border-style: solid;
+            border-color: white;
         }
 
-        .ship.horizonal {
-            border-top-style: solid;
-            border-bottom-style: solid;
+        .ship.horizontal {
+            border-top-color: red;
+            border-bottom-color: red;
+        }
+
+        .ship.horizontal.first {
+            border-left-color: red;
+        }
+
+        .ship.horizontal.last {
+            border-right-color: red;
         }
 
         .ship.vertical {
-            border-left-style: solid;
-            border-right-style: solid;
+            border-left-color: red;
+            border-right-color: red;
+        }
+
+        .ship.vertical.first {
+            border-top-color: red;
+        }
+
+        .sunk {
+            background-color: #800;
+        }
+
+        .ship.vertical.last {
+            border-bottom-color: red;
+        }
+
+        .ocean {
+            border-collapse: separate;
+            border-spacing: unset;
+            display: inline-block;
+            box-shadow: 4px 5px 15px 5px #000000;
+            padding: 8px;
+            border: 10px solid #442222;
+            background-color: #3caab5;
+        }
+
+        .hit {
+            color: red;
+        }
+
+        .miss {
+            color: white;
+        }
+
+        #stats {
+            width: 100px;
+            position: absolute;
+            left: 625px;
+            top: 200px;
+            white-space: nowrap;
+        }
+
+        #winner {
+            display: none;
+            font-size: 60px;
+            margin: 0 auto;
+            position: absolute;
+            top: 476px;
+            left: 180px;
         }
 
     </style>
@@ -54,14 +110,27 @@
             <li>Will be replaced by actual games</li>
         </ul>
         <div id="gameField">
-            <pre id="target_ocean"></pre>
-            <pre id="ocean"></pre>
+            <table id="target_ocean" class="ocean"></table>
+            <table id="ocean" class="ocean"></table>
+            <table id="stats">
+                <tr>
+                    <th>Treffer:</th>
+                    <td id="hits"></td>
+                </tr>
+                <tr>
+                    <th>letzter Gegnerschuss:</th>
+                    <td id="last_shot"></td>
+                </tr>
+            </table>
         </div>
+        <div id="winner"></div>
         <script>
             const $gameField = $('#gameField').hide();
             const $ocean = $('#ocean');
             const $targetOcean = $('#target_ocean');
             const $ul = $('ul#games').empty();
+            const $winner = $('#winner');
+
             $.get('/login', function (data) {
                 console.log(data.current_user);
                 $.get(data.current_user, function (user) {
@@ -100,26 +169,59 @@
              *   A function converting the characters in the ocean to DOM elements.
              */
             function fillOcean($ocean, oceanData, mapper) {
-                $ocean.empty();
+                let header_row = '<td></td>';
+                for (let i = 1; i <= 10; i++) {
+                    header_row += '<td>' + i + '</td>';
+                }
+                $ocean.html('<tr>' + header_row + '</td>');
+                let $row = $('<tr></tr>');
                 for (let i = 0; i < 110; i++) {
                     let c = oceanData[i];
+                    let letter = String.fromCharCode(65 + Math.floor(i / 11));
                     if (c === '\n') {
-                        $ocean.append('<br>');
+                        $row.prepend('<td>' + letter + '</td>');
+                        $ocean.append($row);
+                        $row = $('<tr></tr>');
                         continue;
                     }
 
                     let col = i % 11 + 1;
                     /** @type {string} coordinate, for example "D4" */
-                    let coordinate = String.fromCharCode(65 + Math.floor(i / 11)) + col;
+                    let coordinate = letter + col;
 
                     let $span = $(mapper(c, coordinate));
-                    $ocean.append($span.attr('id', coordinate))
+                    $row.append($span.attr('id', coordinate))
                 }
             }
 
+            function getClassFromChar(char) {
+                if (char === "S") {
+                    return 'hit sunk';
+                }
+                if (char === "H") {
+                    return 'hit';
+                }
+                if (char === "M") {
+                    return 'miss'
+                }
+                return '';
+            }
+
             function continueExistingGame() {
-                $.get($(this).data('game'), (game) => {
+                let fillGameField = (game) => {
+                    function count(char) {
+                        let found = 0;
+                        for (let i = 0; i < 110; i++) {
+                            if (game.target_ocean[i] === char) found++;
+                        }
+                        return found;
+                    }
+
                     $gameField.show();
+                    $('#last_shot').text(game.last_shot_target + '. ' + game.last_shot_result);
+                    let hits = count('H') + count('S');
+                    let misses = count('M');
+                    $('#hits').html('<span title="Treffer">' + hits + '</span>/<span title="Schüsse">' + (hits + misses) + '</span>');
                     fillOcean($ocean, game.ocean, (char, coordinate) => {
                         let classes = '';
                         for (let ship in game.ships) {
@@ -134,29 +236,63 @@
                                     if (posKey === 0) {
                                         classes += ' first';
                                     }
-                                    if (posKey === positions.length) {
+                                    if (posKey === positions.length - 1) {
                                         classes += ' last';
                                     }
                                 }
                             }
                         }
-                        if (char === "S" || char === "H") {
-                            // Sunk or hit
-                            return '<span class="' + classes + ' hit">●</span>';
+                        classes += ' ' + getClassFromChar(char);
+                        if (char !== ".") {
+                            // A peg was placed:
+                            return '<td class="' + classes + ' hit">●</td>';
                         }
-                        return '<span class="' + classes + '">◌</span>';
+
+                        // No peg yet:
+                        return '<td class="' + classes + '">◌</td>';
                     });
                     fillOcean($targetOcean, game.target_ocean, (char, coordinate) => {
-                        if (char === "S" || char === "H") {
-                            return '<span class="hit">●</span>';
+                        if (char === '.') {
+                            if (game.winner) {
+                                return '<td>◌</td>';
+                            }
+                            return '<td class="not-shot-yet">◌</td>';
                         }
-                        if (char === "M") {
-                            return '<span class="miss">●</span>';
-                        }
-                        return '<span>◌</span>';
+                        return '<td class="' + getClassFromChar(char) + '">●</td>';
                     });
+                    for (let ship in game.ships) {
+                        let $ship = $('.' + ship);
+                        $ship.attr('title', ship.charAt(0).toUpperCase() + ship.slice(1))
+                            .hover(
+                                function () {
+                                    $ship.css('background-color', 'yellow')
+                                },
+                                function () {
+                                    $ship.css('background-color', '')
+                                },
+                            );
+                    }
+                    $gameField.css('opacity', game.winner ? 0.3 : 1);
 
-                });
+                    $winner.toggle(!!game.winner);
+                    if (game.winner) {
+                        $winner.text(game.winner === 'Player' ? 'Du hast gewonnen!' : 'Du hast verloren!');
+                        return;
+                    }
+                    $('.not-shot-yet', $targetOcean).click(function () {
+                        let $td = $(this);
+                        $.ajax({
+                            url: game['@id'] + '/shoot',
+                            headers: {'Content-Type': 'application/json'},
+                            method: 'POST',
+                            data: '{"target": "' + $td.attr('id') + '"}',
+                            success: (game) => {
+                                fillGameField(game);
+                            }
+                        });
+                    });
+                };
+                $.get($(this).data('game'), fillGameField);
             }
         </script>
     </div>
