@@ -18,6 +18,10 @@ class ShootingController extends ShipActionController
     {
         $this->checkPermissions($security, $data);
 
+        if ($data->getWinner()) {
+            throw new BadRequestException('Cannot shoot after game is won or lost.');
+        }
+
         $this->savePlayerShot($request, $data, $entityManager);
         $this->saveComputerShot($data, $entityManager);
         $entityManager->persist($data);
