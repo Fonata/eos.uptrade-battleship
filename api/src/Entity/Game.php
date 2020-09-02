@@ -41,11 +41,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "method"="POST",
  *              "path"="/games/{id}/shoot",
  *              "controller"=ShootingController::class,
+ *              "status"=200
  *          },
  *          "move-ship"={
  *              "method"="POST",
  *              "path"="/games/{id}/move-ship",
  *              "controller"=MoveShipController::class,
+ *              "status"=200
  *          },
  *          "patch"={
  *              "security"="false"
