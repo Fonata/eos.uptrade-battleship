@@ -5,16 +5,20 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\InitializeGameController;
+use App\Controller\MoveShipController;
 use App\Controller\ShootingController;
 use App\Repository\GameRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=GameRepository::class)
  * @ApiResource(
  *      routePrefix="/api",
+ *      normalizationContext={"groups"={"read"}},
+ *      denormalizationContext={"groups"={"write"}},
  *      collectionOperations={
  *          "get"={
  *              "security"="is_granted('ROLE_ADMIN')",
@@ -58,6 +62,7 @@ class Game implements TimestampableEntityInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $id;
 
@@ -66,6 +71,7 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false
      * )
+     * @Groups({"read"})
      *
      * Das bedeuten die Zeichen:
      *   - ".": noch kein Schuss
@@ -95,6 +101,7 @@ class Game implements TimestampableEntityInterface
      *         }
      *     }
      * )
+     * @Groups({"read"})
      */
     private $owner;
 
@@ -103,6 +110,7 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false
      * )
+     * @Groups({"read"})
      */
     private $created;
 
@@ -111,6 +119,7 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false
      * )
+     * @Groups({"read"})
      */
     private $changed;
 
@@ -119,6 +128,7 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false
      * )
+     * @Groups({"read"})
      */
     private $ships = [];
 
@@ -136,6 +146,7 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false
      * )
+     * @Groups({"read"})
      *
      * // Lowercase ship names.
      */
@@ -145,6 +156,7 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false
      * )
+     * @Groups({"read"})
      *
      * For example "submarine".
      */
@@ -156,6 +168,7 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false
      * )
+     * @Groups({"read"})
      */
     public string $last_shot_result = '';
 
@@ -163,12 +176,18 @@ class Game implements TimestampableEntityInterface
      * @ApiProperty(
      *     writable=false,
      * )
+     * @Groups({"read"})
      */
     public string $last_shot_target = '';
-    private $peg_counts;
+
+    /**
+     * @Groups({"read"})
+     */
+    public $peg_counts;
 
     /**
      * @ORM\Column(type="string", length=6, nullable=true)
+     * @Groups({"read"})
      */
     private $winner;
 
