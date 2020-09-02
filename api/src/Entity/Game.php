@@ -38,6 +38,11 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
  *              "path"="/games/{id}/shoot",
  *              "controller"=ShootingController::class,
  *          },
+ *          "move-ship"={
+ *              "method"="POST",
+ *              "path"="/games/{id}/move-ship",
+ *              "controller"=MoveShipController::class,
+ *          },
  *          "patch"={
  *              "security"="false"
  *          },

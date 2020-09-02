@@ -5,36 +5,18 @@ namespace App\Controller;
 use ApiPlatform\Core\Validator\Exception\ValidationException;
 use App\Entity\Game;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * Wird bei jedem Spielzug des Clients aufgerufen
  */
-class ShootingController extends AbstractController
+class ShootingController extends ShipActionController
 {
     public function __invoke(Request $request, Security $security, EntityManagerInterface $entityManager, Game $data)
     {
-        $user = $security->getUser();
-        if (!$user) {
-            return new JsonResponse(
-                ['status' => 'error', 'reason' => "Not logged in."],
-                JsonResponse::HTTP_FORBIDDEN);
-        }
-
-        $gameOwner = $data->getOwner();
-        if (!$gameOwner) {
-            throw new ValidationException('Each game must have an owner.');
-        }
-        if ($user->getUsername() !== $gameOwner->getUsername()) {
-            return new JsonResponse(
-                ['status' => 'error', 'reason' => "This is not your game."],
-                JsonResponse::HTTP_FORBIDDEN);
-
-        }
+        $this->checkPermissions($security, $data);
 
         $this->savePlayerShot($request, $data, $entityManager);
         $this->saveComputerShot($data, $entityManager);
