@@ -43,11 +43,11 @@ final class SwaggerDecorator implements NormalizerInterface
         ];
 
 
-        $paths['/api/game/{id}/shoot']['post']['summary'] =
+        $paths['/api/games/{id}/shoot']['post']['summary'] =
             'API endpoint for the player to shoot.
              This will also cause the computer player to shoot.
              The returned game will contain updated oceans.';
-        $paths['/api/game/{id}/shoot']['post']['requestBody'] = [
+        $paths['/api/games/{id}/shoot']['post']['requestBody'] = [
             'required' => true,
             'content' => [
                 'application/json' => ['schema' => [
@@ -62,7 +62,26 @@ final class SwaggerDecorator implements NormalizerInterface
                     'required' => ['target']]]
             ]
         ];
-        $paths['/api/game/{id}/shoot']['post']['responses']['200'] = [
+        $paths['/api/games/{id}/move-ship']['post'] ['summary'] = 'Move a single ship around before the first shot.';
+        $paths['/api/games/{id}/move-ship']['post'] ['requestBody'] = [
+            'required' => true,
+            'content' => [
+                'application/json' => ['schema' => [
+                    'type' => 'object',
+                    'properties' => [
+                        '**ship name**' => [
+                            'type' => 'array',
+                            'minItems' => 2,
+                            'maxItems' => 5,
+                            'uniqueItems' => true,
+                            'description' => 'The coordinates of the ship.',
+                            'items' => ['type' => 'string', 'example' => "D4"]
+                        ],
+                    ],
+                    'required' => ['target']]]
+            ]
+        ];
+        $paths['/api/games/{id}/shoot']['post']['responses']['200'] = [
             'description' => 'Result of the shot.',
             'content' => [
                 'application/json' => [
@@ -78,7 +97,6 @@ final class SwaggerDecorator implements NormalizerInterface
                         ]
                 ]]
         ];
-        unset($paths['/api/game/{id}/shoot']['post']['responses']['201']);
         $paths['/login']['post']['responses'] = [
             '200' => ['description' => 'Success'],
             '403' => ['description' => 'Failure'],

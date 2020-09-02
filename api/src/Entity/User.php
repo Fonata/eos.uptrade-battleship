@@ -39,9 +39,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "delete"={
  *              "security"="is_granted('ROLE_ADMIN') or object.getId() == user.getId()",
- *              "swagger_context"={
- *                  "summary" = "Change user password"
- *              }
  *          }
  *      }
  * )
