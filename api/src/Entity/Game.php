@@ -376,6 +376,13 @@ class Game implements TimestampableEntityInterface
         return $this;
     }
 
+    public static function getShipLengths(): array
+    {
+        return [
+            'carrier' => 5, 'battleship' => 4, 'cruiser' => 3, 'submarine' => 3, 'destroyer' => 2
+        ];
+    }
+
     public function getSeed(): ?string
     {
         return $this->seed;

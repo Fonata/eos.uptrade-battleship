@@ -84,9 +84,7 @@ class InitializeGameController
 
     private function randomlyPlaceShips(Game $game)
     {
-        $remainingShipsToPlace = [
-            'carrier' => 5, 'battleship' => 4, 'cruiser' => 3, 'submarine' => 3, 'destroyer' => 2
-        ];
+        $remainingShipsToPlace = Game::getShipLengths();
         $placedShips = [];
         while ($remainingShipsToPlace) {
             $newPositions = $this->getRandomPositions(current($remainingShipsToPlace));
