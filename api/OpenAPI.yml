@@ -1,0 +1,786 @@
+openapi: 3.0.2
+info:
+  title: 'eos.uptrade Battleship API'
+  version: 1.0.0
+paths:
+  /api/games:
+    get:
+      tags:
+        - Game
+      operationId: getGameCollection
+      summary: 'Retrieves the collection of Game resources.'
+      responses:
+        200:
+          description: 'Game collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Game:jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game-read'
+      parameters:
+        -
+          name: page
+          in: query
+          required: false
+          description: 'The collection page number'
+          schema:
+            type: integer
+            default: 1
+    post:
+      tags:
+        - Game
+      operationId: postGameCollection
+      summary: 'Creates a Game resource.'
+      responses:
+        201:
+          description: 'Game resource created'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Game:jsonld-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+          links:
+            GetGameItem:
+              parameters:
+                id: '$response.body#/id'
+              operationId: getGameItem
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /api/games/{id}`.'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Game:jsonld-write'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Game-write'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Game-write'
+        description: 'The new Game resource'
+  '/api/games/{id}':
+    get:
+      tags:
+        - Game
+      operationId: getGameItem
+      summary: 'Retrieves a Game resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Game resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Game:jsonld-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+        404:
+          description: 'Resource not found'
+    put:
+      tags:
+        - Game
+      operationId: putGameItem
+      summary: 'Replaces the Game resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Game resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Game:jsonld-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Game:jsonld-write'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Game-write'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Game-write'
+        description: 'The updated Game resource'
+    patch:
+      tags:
+        - Game
+      operationId: patchGameItem
+      summary: 'Updates the Game resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Game resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Game:jsonld-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Game-write'
+        description: 'The updated Game resource'
+    delete:
+      tags:
+        - Game
+      operationId: deleteGameItem
+      summary: 'Removes the Game resource.'
+      responses:
+        204:
+          description: 'Game resource deleted'
+        404:
+          description: 'Resource not found'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  '/api/games/{id}/move-ship':
+    post:
+      tags:
+        - Game
+      operationId: move-shipGameItem
+      summary: 'Move a single ship around before the first shot.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Game resource created'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Game:jsonld-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Game-read'
+          links:
+            GetGameItem:
+              parameters:
+                id: '$response.body#/id'
+              operationId: getGameItem
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /api/games/{id}`.'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                '**ship name**':
+                  type: array
+                  description: 'The coordinates of the ship.'
+                  items: { type: string, example: D4 }
+              required:
+                - target
+  '/api/games/{id}/shoot':
+    post:
+      tags:
+        - Game
+      operationId: shootGameItem
+      summary: |
+        API endpoint for the player to shoot.
+                     This will also cause the computer player to shoot.
+                     The returned game will contain updated oceans.
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Result of the shot.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result: { type: string, enum: [Miss., 'Hit. Carrier.', 'Hit. Battleship.', 'Hit. Cruiser.', 'Hit. Submarine.', 'Hit. Destroyer.'] }
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target:
+                  type: string
+                  example: D4
+                  description: 'The coordinates of the target.'
+              required:
+                - target
+  /api/users:
+    get:
+      tags:
+        - User
+      operationId: getUserCollection
+      summary: 'Retrieves the collection of User resources.'
+      responses:
+        200:
+          description: 'User collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      parameters:
+        -
+          name: page
+          in: query
+          required: false
+          description: 'The collection page number'
+          schema:
+            type: integer
+            default: 1
+    post:
+      tags:
+        - User
+      operationId: postUserCollection
+      summary: 'Creates a User resource.'
+      responses:
+        201:
+          description: 'User resource created'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/User:jsonld'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/User'
+          links:
+            GetUserItem:
+              parameters:
+                id: '$response.body#/id'
+              operationId: getUserItem
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /api/users/{id}`.'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/User:jsonld'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: 'The new User resource'
+  '/api/users/{id}':
+    get:
+      tags:
+        - User
+      operationId: getUserItem
+      summary: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'User resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/User:jsonld'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: 'Resource not found'
+    put:
+      tags:
+        - User
+      operationId: putUserItem
+      summary: 'Replaces the User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'User resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/User:jsonld'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/User:jsonld'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: 'The updated User resource'
+    patch:
+      tags:
+        - User
+      operationId: patchUserItem
+      summary: 'Updates the User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'User resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/User:jsonld'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: 'The updated User resource'
+    delete:
+      tags:
+        - User
+      operationId: deleteUserItem
+      summary: 'Deletes the user along with all of his or her games.'
+      responses:
+        204:
+          description: 'User resource deleted'
+        404:
+          description: 'Resource not found'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /login:
+    post:
+      summary: 'API endpoint to sign users in.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: admin@eos-uptrade.de
+                  description: 'The email address of the user to log in.'
+                password:
+                  type: string
+                  example: demo
+              required:
+                - email
+                - password
+      responses:
+        200:
+          description: Success
+        403:
+          description: Failure
+components:
+  schemas:
+    Game-read:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        ocean:
+          readOnly: true
+          type: string
+        owner:
+          example: /api/user/1
+          type: string
+          format: iri-reference
+        created:
+          readOnly: true
+          type: string
+          format: date-time
+        changed:
+          readOnly: true
+          type: string
+          format: date-time
+        ships:
+          readOnly: true
+          type: array
+          items:
+            type: string
+        sunken_ships:
+          readOnly: true
+          type: array
+          items:
+            type: string
+          nullable: true
+        last_sunken_ship:
+          readOnly: true
+          type: string
+        last_shot_result:
+          readOnly: true
+          description: '"Hit. _SOME-SHIP_." or "Miss."'
+          type: string
+        last_shot_target:
+          readOnly: true
+          type: string
+        peg_counts: {  }
+        winner:
+          type: string
+          nullable: true
+        seed:
+          description: 'Ein Seed ungleich 0 heißt, dass das Spiel vorhersehbar abläuft.'
+          type: integer
+          nullable: true
+    Game-write:
+      type: object
+      description: ''
+      properties:
+        seed:
+          description: 'Ein Seed ungleich 0 heißt, dass das Spiel vorhersehbar abläuft.'
+          type: integer
+          nullable: true
+    'Game:jsonld-read':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          type: integer
+        ocean:
+          readOnly: true
+          type: string
+        owner:
+          example: /api/user/1
+          type: string
+          format: iri-reference
+        created:
+          readOnly: true
+          type: string
+          format: date-time
+        changed:
+          readOnly: true
+          type: string
+          format: date-time
+        ships:
+          readOnly: true
+          type: array
+          items:
+            type: string
+        sunken_ships:
+          readOnly: true
+          type: array
+          items:
+            type: string
+          nullable: true
+        last_sunken_ship:
+          readOnly: true
+          type: string
+        last_shot_result:
+          readOnly: true
+          description: '"Hit. _SOME-SHIP_." or "Miss."'
+          type: string
+        last_shot_target:
+          readOnly: true
+          type: string
+        peg_counts: {  }
+        winner:
+          type: string
+          nullable: true
+        seed:
+          description: 'Ein Seed ungleich 0 heißt, dass das Spiel vorhersehbar abläuft.'
+          type: integer
+          nullable: true
+    'Game:jsonld-write':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        seed:
+          description: 'Ein Seed ungleich 0 heißt, dass das Spiel vorhersehbar abläuft.'
+          type: integer
+          nullable: true
+    User:
+      type: object
+      description: ''
+      externalDocs:
+        url: 'http://schema.org/Person'
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        name:
+          example: Christian
+          externalDocs:
+            url: 'http://schema.org/givenName'
+          type: string
+        surname:
+          example: Bläul
+          externalDocs:
+            url: 'http://schema.org/familyName'
+          type: string
+        email:
+          example: christian@blaeul.de
+          externalDocs:
+            url: 'http://schema.org/email'
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+            example: ROLE_USER
+            enum:
+              - ROLE_USER
+              - ROLE_ADMIN
+          externalDocs:
+            url: 'http://schema.org/email'
+        password:
+          writeOnly: true
+          description: 'The hashed password'
+          type: string
+        games:
+          readOnly: true
+          type: array
+          items:
+            type: string
+            format: iri-reference
+        created:
+          readOnly: true
+          type: string
+          format: date-time
+        changed:
+          readOnly: true
+          type: string
+          format: date-time
+        simulatedPlayer:
+          type: boolean
+      required:
+        - name
+        - email
+    'User:jsonld':
+      type: object
+      description: ''
+      externalDocs:
+        url: 'http://schema.org/Person'
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          type: integer
+        name:
+          example: Christian
+          externalDocs:
+            url: 'http://schema.org/givenName'
+          type: string
+        surname:
+          example: Bläul
+          externalDocs:
+            url: 'http://schema.org/familyName'
+          type: string
+        email:
+          example: christian@blaeul.de
+          externalDocs:
+            url: 'http://schema.org/email'
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+            example: ROLE_USER
+            enum:
+              - ROLE_USER
+              - ROLE_ADMIN
+          externalDocs:
+            url: 'http://schema.org/email'
+        password:
+          writeOnly: true
+          description: 'The hashed password'
+          type: string
+        games:
+          readOnly: true
+          type: array
+          items:
+            type: string
+            format: iri-reference
+        created:
+          readOnly: true
+          type: string
+          format: date-time
+        changed:
+          readOnly: true
+          type: string
+          format: date-time
+        simulatedPlayer:
+          type: boolean
+      required:
+        - name
+        - email
+
+# Diese Datei wurde exportiert mit:
+#    cd /var/www/battleship.blaeul.de/api
+#    bin/console api:openapi:export --spec-version=3 --yaml > OpenAPI.yml
