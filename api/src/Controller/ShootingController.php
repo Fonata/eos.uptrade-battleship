@@ -100,11 +100,15 @@ class ShootingController extends AbstractController
 
     private function saveComputerShot(Game $game, EntityManagerInterface $entityManager)
     {
+        if ($game->getSeed()) {
+            mt_srand($game->getSeed());
+        }
+
         $ocean = $game->getOcean();
         $charInOcean = $this->findHarmedShip($ocean);
         if ($charInOcean === null) {
             do {
-                $charInOcean = 2 * random_int(0, 54);
+                $charInOcean = 2 * mt_rand(0, 54);
             } while ($ocean[$charInOcean] !== '.');
         }
         $col = $charInOcean % 11 + 1;

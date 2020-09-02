@@ -167,6 +167,14 @@ class Game implements TimestampableEntityInterface
      */
     private $winner;
 
+    /**
+     * Ein Seed ungleich 0 heißt, dass das Spiel vorhersehbar abläuft.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read", "write"})
+     */
+    private $seed;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -364,6 +372,18 @@ class Game implements TimestampableEntityInterface
             throw new BadRequestException('Invalid winner: ' . $winner);
         }
         $this->winner = $winner;
+
+        return $this;
+    }
+
+    public function getSeed(): ?string
+    {
+        return $this->seed;
+    }
+
+    public function setSeed(?string $seed): self
+    {
+        $this->seed = $seed;
 
         return $this;
     }

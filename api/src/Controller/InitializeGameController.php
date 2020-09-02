@@ -38,6 +38,9 @@ class InitializeGameController
 
             $this->entityManager->persist($simulatedPlayer);
         }
+        if ($data->getSeed()) {
+            mt_srand($data->getSeed());
+        }
 
         // Jedes Spiel besteht aus 2 Game-Records: eines je Spieler
         $enemyGame = (new Game())
@@ -62,17 +65,17 @@ class InitializeGameController
      */
     private function getRandomPositions(int $shipLength): array
     {
-        $horizontal = random_int(1, 2) === 1;
+        $horizontal = mt_rand(1, 2) === 1;
         if ($horizontal) {
-            $row = chr(random_int(ord('A'), ord('J')));
-            $col = random_int(1, 8 - $shipLength);
+            $row = chr(mt_rand(ord('A'), ord('J')));
+            $col = mt_rand(1, 8 - $shipLength);
             return array_map(static function ($i) use ($row, $col) {
                 return $row . ($col + $i);
             }, range(0, $shipLength - 1));
         }
 
-        $row = random_int(ord('A'), ord('J') - $shipLength);
-        $col = random_int(1, 8);
+        $row = mt_rand(ord('A'), ord('J') - $shipLength);
+        $col = mt_rand(1, 8);
         return array_map(static function ($i) use ($row, $col) {
             return chr($row + $i) . $col;
         }, range(0, $shipLength - 1));
