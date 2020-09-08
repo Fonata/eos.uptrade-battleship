@@ -2,4 +2,5 @@
 /api/bin/.phpunit/
 /api/.phpunit.result.cache
 /api/phpunit.xml.dist
+node_modules
 vendor
