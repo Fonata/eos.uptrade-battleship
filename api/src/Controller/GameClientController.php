@@ -10,16 +10,30 @@ use Symfony\Component\Security\Core\Security;
 class GameClientController extends AbstractController
 {
     /**
-     * @Route("/game", name="game_client")
+     * @Route("/game/jquery", name="game_jquery")
      * @param Security $security
      * @return Response
      */
-    public function index(Security $security)
+    public function jquery(Security $security)
     {
         $user = $security->getUser();
         if (!$user) {
             return $this->redirectToRoute('login_form');
         }
-        return $this->render('game_client/index.html.twig');
+        return $this->render('game_client/jquery.html.twig');
+    }
+
+    /**
+     * @Route("/game/vue", name="game_vue")
+     * @param Security $security
+     * @return Response
+     */
+    public function vue(Security $security)
+    {
+        $user = $security->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('login_form');
+        }
+        return $this->render('game_client/vue.html.twig');
     }
 }
