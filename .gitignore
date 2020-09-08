@@ -2,5 +2,6 @@
 /api/bin/.phpunit/
 /api/.phpunit.result.cache
 /api/phpunit.xml.dist
+/api/public/js/vue_client.js
 node_modules
 vendor

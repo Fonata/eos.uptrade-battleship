@@ -4,6 +4,7 @@
   "description": "Battleship API client written in Vue.js",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

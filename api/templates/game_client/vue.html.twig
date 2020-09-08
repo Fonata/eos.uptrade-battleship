@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <style>
+        .game-wrapper {
+            margin: 1em 30px;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        li {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        #ocean {
+            color: blue;
+            box-shadow: 4px 5px 15px 5px #000000;
+        }
+
+        #target_ocean td.not-shot-yet:hover {
+            background: #ffffaa;
+            cursor: pointer;
+        }
+
+        .ocean td {
+            border-width: 1px;
+            border-style: solid;
+            border-color: white;
+        }
+
+        .ship.horizontal {
+            border-top-color: red;
+            border-bottom-color: red;
+        }
+
+        .ship.horizontal.first {
+            border-left-color: red;
+        }
+
+        .ship.horizontal.last {
+            border-right-color: red;
+        }
+
+        .ship.vertical {
+            border-left-color: red;
+            border-right-color: red;
+        }
+
+        .ship.vertical.first {
+            border-top-color: red;
+        }
+
+        .sunk {
+            background-color: #800;
+        }
+
+        .ship.vertical.last {
+            border-bottom-color: red;
+        }
+
+        .ocean {
+            border-collapse: separate;
+            border-spacing: unset;
+            display: inline-block;
+            box-shadow: 4px 5px 15px 5px #000000;
+            padding: 8px;
+            border: 10px solid #442222;
+            background-color: #3caab5;
+        }
+
+        .hit {
+            color: red;
+        }
+
+        .miss {
+            color: white;
+        }
+
+        #stats {
+            width: 100px;
+            position: absolute;
+            left: 625px;
+            top: 200px;
+            white-space: nowrap;
+        }
+
+        #winner {
+            display: none;
+            font-size: 60px;
+            margin: 0 auto;
+            position: absolute;
+            top: 476px;
+            left: 180px;
+        }
+
+    </style>
+
+    <div class="breadcrumb"><a href="{{ path('front_page') }}">Home</a></div>
+    <h1>Schiffe versenken mit Vue 2.6.12</h1>
+    <div class="game-wrapper" id="app">
+    </div>
+    <script src="{{ asset('js/vue_client.js') }}"></script>
+{% endblock %}
