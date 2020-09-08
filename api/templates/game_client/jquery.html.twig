@@ -133,7 +133,6 @@
             const $winner = $('#winner');
 
             $.get('/login', function (data) {
-                console.log(data.current_user);
                 $.get(data.current_user, function (user) {
                     for (const gameKey in user.games) {
                         // noinspection JSUnfilteredForInLoop
